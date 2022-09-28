@@ -1,0 +1,162 @@
+#Install necessary packages and call its library
+library(igraph)
+library(keyplayer)
+library(tidyverse)
+library(readr)
+
+## -- PART 1 -- ##
+#Data Preparation and Network Creation
+
+#Dataframe
+edges <- read.csv("/Users/XXX.csv", header = T, as.is= T)
+nodes <- read.csv("/Users/XXX.csv", header = T, as.is = T)
+
+#Aggregating Data
+edges <- aggregate(edges[,3], edges[,-3], sum)
+edges <- edges[order(edges$Source, edges$Target),]
+colnames(edges)[3] <- "weight"
+rownames(edges) <- NULL
+
+#Network Creation (basic style - not attractive and messy)
+net <- graph_from_data_frame(d=edges, vertices=nodes, directed=F)
+net
+plot(net)
+
+#Check/Call each column of the Network
+V(net)$Community #this should be based on column title of your data
+V(net)$Community.type #this should be based on column title of your data
+E(net)$weight
+
+
+## -- PART 2 -- ##
+#Analyse & Plot the Network (aesthetic style)
+
+#Colors (creating a list of colour for each node and edge)
+colrs <- c("burlywood2", "gold", "lavender", "darkolivegreen2", "tomato", "steelblue1", "cyan3", "plum1")
+V(net)$color <- colrs[V(net)$Community.type]
+
+
+##ANALYSIS 1-DEGREE CENTRALITY: 
+
+#Compute node degrees (#links) and use that to set node size:
+deg <- degree(net, mode="all", normalized = T)
+degree(net, mode="all") 
+deg_cent <- data.frame(deg) 
+
+#Degree Centrality Histogram
+hist(degree(net), main="Degree Centrality")
+
+#Plot Network (Degree Centrality)
+plot(net,
+     vertex.label.cex = .4,
+     vertex.label.family = "Helvetica",
+     vertex.frame.color = NA,
+     vertex.size = deg*100,
+     edge.color=edge.col,
+     edge.curved=.05,
+     layout=layout_with_gem,
+     main = "Degree Centrality of Marginal School Community")
+
+
+##ANALYSIS 2-BETWEENESS CENTRALITY: 
+
+#Compute node betweenes centrality
+bet <- betweenness(net, directed=F, weights = NA, normalized = T)
+betweenness(net, directed=F, weights = NA, normalized = T)
+bet_cent <- data.frame(bet)
+
+#Betweeness Centrality Histogram
+hist(betweenness(net), main="Betweeness Centrality")
+
+#Plot Network (Betweeness Centrality)
+plot(net,
+     vertex.label.cex = .4,
+     vertex.label.family = "Helvetica",
+     vertex.frame.color = NA,
+     vertex.size = bet*100,
+     edge.color=edge.col,
+     edge.curved=.05,
+     layout=layout_with_gem,
+     main = "Betweeness Centrality of Marginal School Community")
+
+
+##ANALYSIS 3-CLOSENESS CENTRALITY:
+
+#Compute node closeness centrality
+clos <- closeness(net, weights = NA, normalized = T)
+V(net)$size <- clos*25
+closeness(net, weights = NA, normalized = T)
+
+#Closeness Centrality Histogram
+hist(closeness(net), main="Closeness Centrality")
+
+#Plot Network (Closeness Centrality)
+plot(net,
+     vertex.label.cex = .4,
+     vertex.label.family = "Helvetica",
+     vertex.frame.color = NA,
+     vertex.size = clos*25,
+     edge.color=edge.col,
+     edge.curved=.05,
+     layout=layout_with_gem,
+     main = "Closeness Centrality of Marginal School Community")
+
+#AESTHETIC: change arrow size and edge color:
+E(net)$arrow.size <- .2
+edge.start <- ends(net, es=E(net), names=F)[,1]
+edge.col <- V(net)$color[edge.start]
+E(net)$width <- 0.75
+
+##ANALYSIS 4-INTERACTION RATE: 
+
+#Calculate network density
+edge_density(net, loops = FALSE)
+
+#Create Network Interaction Rate
+# Set edge width based on weight:
+weigh <- E(net)$weight
+Edge_width <- data.frame(sizeCut)
+E(net)$width <- sizeCut
+
+#Plot Network (Interaction Rate)
+plot(net,
+     vertex.label.cex = .4,
+     vertex.label.family = "Helvetica",
+     vertex.frame.color = NA,
+     edge.color=edge.col,
+     edge.curved=.05,
+     layout=layout_with_gem,
+     main = "Interaction Rate of Marginal School Community")
+
+
+## -- PART 3 -- ##
+#Create Legends
+
+#Legend (Representation of each Node)
+legend(x=-1.9, y=-1.2, c("Elementary school-age student", "Middle school-age student",
+                         "Parents", "Informal settlers (excluding parents)",
+                         "Marginal School Community's committee", 
+                         "Marginal School Community's volunteer",
+                         "Higher education", "Other organisations (Community/NGO)"), 
+       pch=21, col=NA, pt.bg=colrs, pt.cex=1.75, cex=.75, bty="n", ncol=2)
+
+#Legend (Node Size)
+n<-6 
+size_vec<-seq_len(n) 
+sizeCut<-cut(clos,n) 
+vertex.size<-size_vec[sizeCut] 
+scaled <- 1 + ((2-1) * (size_vec - min(size_vec)) / (max(size_vec) - min(size_vec))) 
+a <- legend("left",legend=levels(sizeCut),pt.cex=size_vec/100,col="black", pch=21, pt.bg=NA) 
+x <- (a$text$x + a$rect$left) / 2 
+y <- a$text$y
+symbols(x,y,circles=size_vec/100,inches=FALSE,add=T,bg="white")
+
+
+#Legend (Edges Size) - for Interaction Rate Network
+n<-5 
+size_vec<-seq_len(n) 
+sizeCut<-cut(weigh,n) 
+vertex.size<-size_vec[sizeCut] 
+scaled <- 1 + ((2-1) * (size_vec - min(size_vec)) / (max(size_vec) - min(size_vec))) 
+legend("left", legend=levels(sizeCut), 
+       col="black", lty=1, cex=.8, lwd = size_vec)
