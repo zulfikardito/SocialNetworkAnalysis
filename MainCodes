@@ -55,7 +55,7 @@ plot(net,
      edge.color=edge.col,
      edge.curved=.05,
      layout=layout_with_gem,
-     main = "Degree Centrality of Marginal School Community")
+     main = "Degree Centrality")
 
 
 ##ANALYSIS 2-BETWEENESS CENTRALITY: 
@@ -77,7 +77,7 @@ plot(net,
      edge.color=edge.col,
      edge.curved=.05,
      layout=layout_with_gem,
-     main = "Betweeness Centrality of Marginal School Community")
+     main = "Betweeness Centrality")
 
 
 ##ANALYSIS 3-CLOSENESS CENTRALITY:
@@ -99,13 +99,15 @@ plot(net,
      edge.color=edge.col,
      edge.curved=.05,
      layout=layout_with_gem,
-     main = "Closeness Centrality of Marginal School Community")
+     main = "Closeness Centrality")
 
-#AESTHETIC: change arrow size and edge color:
+#AESTHETIC: 
+#Change arrow size and edge color:
 E(net)$arrow.size <- .2
 edge.start <- ends(net, es=E(net), names=F)[,1]
 edge.col <- V(net)$color[edge.start]
 E(net)$width <- 0.75
+
 
 ##ANALYSIS 4-INTERACTION RATE: 
 
@@ -126,7 +128,7 @@ plot(net,
      edge.color=edge.col,
      edge.curved=.05,
      layout=layout_with_gem,
-     main = "Interaction Rate of Marginal School Community")
+     main = "Interaction Rate")
 
 
 ## -- PART 3 -- ##
@@ -139,6 +141,7 @@ legend(x=-1.9, y=-1.2, c("Elementary school-age student", "Middle school-age stu
                          "Marginal School Community's volunteer",
                          "Higher education", "Other organisations (Community/NGO)"), 
        pch=21, col=NA, pt.bg=colrs, pt.cex=1.75, cex=.75, bty="n", ncol=2)
+
 
 #Legend (Node Size)
 n<-6 
