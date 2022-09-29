@@ -129,11 +129,11 @@ plot(net,
 #Create Legends
 
 #Legend (Representation of each Node)
-legend(x=-1.9, y=-1.2, c("Elementary school-age student", "Middle school-age student",
-                         "Parents", "Informal settlers (excluding parents)",
-                         "Marginal School Community's committee", 
-                         "Marginal School Community's volunteer",
-                         "Higher education", "Other organisations (Community/NGO)"), 
+legend(x=-1.9, y=-1.2, c("A student", "B student",
+                         "Parents", "Locals",
+                         "Community's committee", 
+                         "Community's volunteer",
+                         "Educators", "NGO"), 
        pch=21, col=NA, pt.bg=colrs, pt.cex=1.75, cex=.75, bty="n", ncol=2)
 
 
